@@ -1,0 +1,76 @@
+[gd_scene load_steps=13 format=3 uid="uid://1i74lklk3kaq"]
+
+[ext_resource type="Texture2D" uid="uid://b0ldmm41qtqlp" path="res://assets/arts/Board.png" id="1_3msew"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_07cib"]
+[ext_resource type="Texture2D" uid="uid://3s20dn2tjedr" path="res://assets/arts/ScoreBar.png" id="2_30475"]
+[ext_resource type="PackedScene" uid="uid://bajlap6mmqugt" path="res://scenes/player1.tscn" id="3_kqhbd"]
+[ext_resource type="PackedScene" uid="uid://blndsoxiqoemu" path="res://scenes/player2.tscn" id="4_3fect"]
+[ext_resource type="Script" path="res://scripts/WorldBoundary.gd" id="5_a7ny0"]
+[ext_resource type="PackedScene" uid="uid://bs6qbkuptthgm" path="res://scenes/ball.tscn" id="6_lv3rd"]
+[ext_resource type="Script" path="res://scripts/ScoreArea.gd" id="7_j52rl"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_8yhau"]
+normal = Vector2(0, 1)
+distance = 40.0
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_ou14k"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_hrq63"]
+b = Vector2(0, 360)
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_g81m2"]
+b = Vector2(0, 360)
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_07cib")
+
+[node name="Board" type="Sprite2D" parent="."]
+position = Vector2(400.5, 199.25)
+scale = Vector2(1.00125, 0.891209)
+texture = ExtResource("1_3msew")
+
+[node name="ScoreBar" type="Sprite2D" parent="Board"]
+position = Vector2(-232, -200)
+texture = ExtResource("2_30475")
+
+[node name="ScoreBar2" type="Sprite2D" parent="Board"]
+position = Vector2(232, -200)
+texture = ExtResource("2_30475")
+flip_h = true
+
+[node name="Player" parent="." instance=ExtResource("3_kqhbd")]
+position = Vector2(792, 208)
+scale = Vector2(0.8, 0.8)
+
+[node name="Player2" parent="." instance=ExtResource("4_3fect")]
+position = Vector2(8, 208)
+scale = Vector2(0.8, 0.8)
+
+[node name="WorldBoundary" type="Area2D" parent="."]
+script = ExtResource("5_a7ny0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundary"]
+shape = SubResource("WorldBoundaryShape2D_8yhau")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="WorldBoundary"]
+position = Vector2(0, 400)
+shape = SubResource("WorldBoundaryShape2D_ou14k")
+
+[node name="Ball" parent="." instance=ExtResource("6_lv3rd")]
+position = Vector2(392, 192)
+scale = Vector2(0.5, 0.5)
+
+[node name="ScoreArea" type="Area2D" parent="."]
+script = ExtResource("7_j52rl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScoreArea"]
+position = Vector2(-8, 40)
+shape = SubResource("SegmentShape2D_hrq63")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="ScoreArea"]
+position = Vector2(808, 40)
+shape = SubResource("SegmentShape2D_g81m2")
+
+[connection signal="body_entered" from="WorldBoundary" to="WorldBoundary" method="_on_body_entered"]
+[connection signal="body_entered" from="ScoreArea" to="ScoreArea" method="_on_body_entered"]
+[connection signal="new_round" from="ScoreArea" to="." method="_on_score_area_new_round"]
